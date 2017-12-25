@@ -8,9 +8,14 @@ using namespace std;
 
 class MPC {
  public:
-  MPC();
+ 	// Actuator delay in seconds.
+   const double delay = 100.0 / 1000.0;
+   
+   const double Lf = 2.67;
+   
+   MPC();
 
-  virtual ~MPC();
+   virtual ~MPC();
 
   // Solve the model given an initial state and polynomial coefficients.
   // Return the first actuatotions.
