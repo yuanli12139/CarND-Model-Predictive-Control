@@ -9,18 +9,18 @@ Self-Driving Car Engineer Nanodegree Program
 
 ## Project Write-Up
 
-#### The Model
+### The Model
 A Kinematic model is used, which includes the vehicle's coordinates x and y, orientation psi, and velocity v. It predicts the current state by previous state and actuations. The update equations are as follows.
 
 ![alt text][image1]
 
-#### Timestep Length and Elapsed Duration (N & dt)
+### Timestep Length and Elapsed Duration (N & dt)
 N and dt determine the prediction horizon. After trial and error, I eventually chose N = 10 and dt = 0.1 s. With larger N, the model can't predict well in the curves due to inaccurate prediction for further future. With larger dt, the model runs slower and the car gets higher oscillation.
 
-#### Polynomial Fitting and MPC Preprocessing
+### Polynomial Fitting and MPC Preprocessing
 The waypoints are transformed to the car coordinate frame then fitted by a 3rd-order polynomial.
 
-#### Model Predictive Control with Latency
+### Model Predictive Control with Latency
 To handle the latency, the state is considered one step further than the actuator. Thus, the state is offset by the latency (100 ms) using the model update equations.
 
 ## Dependencies
