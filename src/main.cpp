@@ -111,13 +111,34 @@ int main() {
 
           // Fit a 3rd-order polynomial to the points
           auto coeffs = polyfit(waypoints_x, waypoints_y, 3);
+cout << "coeffs: " << coeffs << endl;
           double cte = polyeval(coeffs, 0);
           double epsi = -atan(coeffs[1]);
-
+cout << "a" << endl;
           Eigen::VectorXd state(6);
-          state << 0, 0, 0, v, cte, epsi;
-          auto vars = mpc.Solve(state, coeffs);
+          // state << 0, 0, 0, v, cte, epsi;
 
+         // Initial state.
+          const double x0 = 0;
+          const double y0 = 0;
+          const double psi0 = 0;
+          const double cte0 = coeffs[0];
+          const double epsi0 = -atan(coeffs[1]);
+
+          // State after delay.
+          double delay = 0.1, Lf = 2.67;
+          double delta = j[1]["steering_angle"], a = j[1]["throttle"];
+          double x_delay = x0 + ( v * cos(psi0) * delay );
+          double y_delay = y0 + ( v * sin(psi0) * delay );
+          double psi_delay = psi0 - ( v * delta * delay / Lf );
+          double v_delay = v + a * delay;
+          double cte_delay = cte0 + ( v * sin(epsi0) * delay );
+          double epsi_delay = epsi0 - ( v * atan(coeffs[1]) * delay / Lf );
+
+          state << x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
+         
+          auto vars = mpc.Solve(state, coeffs);
+cout << "b" << endl;
           double steer_value = vars[0] / deg2rad(25);
           double throttle_value = vars[1];
 
@@ -157,9 +178,9 @@ int main() {
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
 
-
+cout << "c" << endl;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
+          //std::cout << msg << std::endl;
           // Latency
           // The purpose is to mimic real driving conditions where
           // the car does actuate the commands instantly.
